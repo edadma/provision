@@ -3,10 +3,10 @@ ThisBuild / versionScheme := Some("semver-spec")
 
 publish / skip := true
 
-lazy val cross_template = crossProject(JSPlatform, JVMPlatform, NativePlatform)
+lazy val provision = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .in(file("."))
   .settings(
-    name := "cross-template",
+    name := "provision",
     version := "0.0.1",
     scalaVersion := "3.2.1",
     scalacOptions ++=
@@ -29,7 +29,8 @@ lazy val cross_template = crossProject(JSPlatform, JVMPlatform, NativePlatform)
 //    ),
     libraryDependencies ++= Seq(
       "com.github.scopt" %%% "scopt" % "4.1.0",
-//      "com.lihaoyi" %%% "pprint" % "0.7.2" % "test",
+      "org.scala-lang.modules" %%% "scala-parser-combinators" % "2.1.1",
+      //      "com.lihaoyi" %%% "pprint" % "0.7.2" % "test",
     ),
     publishMavenStyle := true,
     Test / publishArtifact := false,
