@@ -42,6 +42,7 @@ class SpecParser extends RegexParsers with ImplicitConversions:
       | kw("def") ~> ident ~ line ^^ DefStatement.apply
       | kw("defs") ~> path ^^ DefsStatement.apply
       | kw("copy") ~> path ~ path ^^ CopyStatement.apply
+      | kw("group") ~> ident ~ kw("present") ^^ GroupStatement.apply
 
   def parseSpec(src: String): SpecAST =
     parseAll(spec, new CharSequenceReader(src)) match

@@ -17,6 +17,7 @@ case class DirectoryStatement(dir: Path, owner: Ident, group: Ident, state: Stri
 case class DefStatement(name: Ident, value: String) extends StatementAST
 case class DefsStatement(file: Path) extends StatementAST
 case class CopyStatement(src: Path, dst: Path) extends StatementAST
+case class GroupStatement(group: Ident, state: String) extends StatementAST
 
 case class Ident(s: String, pos: Position = null)
 case class Path(p: String, pos: Position = null)
