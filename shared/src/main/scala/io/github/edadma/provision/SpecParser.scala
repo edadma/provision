@@ -20,10 +20,24 @@ class SpecParser extends RegexParsers with ImplicitConversions:
       Ident(s, p)
     }
 
+  def line: Parser[String] = """.*""".r
+
+  def path: Parser[Path] = pos ~ """^[\s]+""".r ^^ { case p ~ s =>
+    Path(s, p)
+  }
+
   def spec: Parser[SpecAST] = rep(statement) ^^ SpecAST.apply
 
   def statement: Parser[StatementAST] =
-    kw("package") ~> ident ^^ PackageStatement.apply
+    kw("task") ~> line ^^ TaskStatement.apply
+      | kw("package") ~> ident ~ opt(kw("latest") | kw("installed")) ^^ PackageStatement.apply
+      | kw("service") ~> ident ~ kw("started") ^^ ServiceStatement.apply
+      | kw("become") ~> ident ^^ BecomeStatement.apply
+      | kw("user") ~> ident ~ (kw("group") ~> rep1sep(ident, ",")) ~ (kw("shell") ~> path) ~
+      (kw("home") ~> path) ^^ UserStatement.apply
+      | kw("dir") ~> path ~ (kw("owner") ~> ident) ~ (kw("group") ~> ident) ~ (kw("state") ~> kw("present")) ~
+      (kw("mode") ~> """[0-7]{3,4}""".r) ^^ DirectoryStatement.apply
+      | kw("def") ~> ident ~ line ^^ DefStatement.apply
 
   def parseSpec(src: String): SpecAST =
     parseAll(spec, new CharSequenceReader(src)) match
