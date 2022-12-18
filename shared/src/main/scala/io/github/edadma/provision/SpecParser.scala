@@ -38,6 +38,8 @@ class SpecParser extends RegexParsers with ImplicitConversions:
       | kw("dir") ~> path ~ (kw("owner") ~> ident) ~ (kw("group") ~> ident) ~ (kw("state") ~> kw("present")) ~
       (kw("mode") ~> """[0-7]{3,4}""".r) ^^ DirectoryStatement.apply
       | kw("def") ~> ident ~ line ^^ DefStatement.apply
+      | kw("defs") ~> path ^^ DefsStatement.apply
+      | kw("copy") ~> path ~ path ^^ CopyStatement.apply
 
   def parseSpec(src: String): SpecAST =
     parseAll(spec, new CharSequenceReader(src)) match
