@@ -28,12 +28,14 @@ class SpecParser extends RegexParsers with ImplicitConversions:
 
   def spec: Parser[SpecAST] = rep(statement) ^^ SpecAST.apply
 
+  def idents: Parser[Seq[Ident]] = rep1sep(ident, ",")
+
   def statement: Parser[StatementAST] =
     kw("task") ~> line ^^ TaskStatement.apply
-      | kw("package") ~> ident ~ opt(kw("latest") | kw("installed")) ^^ PackageStatement.apply
+      | kw("package") ~> idents ~ opt(kw("latest") | kw("installed")) ^^ PackageStatement.apply
       | kw("service") ~> ident ~ kw("started") ^^ ServiceStatement.apply
       | kw("become") ~> ident ^^ BecomeStatement.apply
-      | kw("user") ~> ident ~ (kw("group") ~> rep1sep(ident, ",")) ~ (kw("shell") ~> path) ~
+      | kw("user") ~> ident ~ (kw("group") ~> idents) ~ (kw("shell") ~> path) ~
       (kw("home") ~> path) ^^ UserStatement.apply
       | kw("dir") ~> path ~ (kw("owner") ~> ident) ~ (kw("group") ~> ident) ~ (kw("state") ~> kw("present")) ~
       (kw("mode") ~> """[0-7]{3,4}""".r) ^^ DirectoryStatement.apply
