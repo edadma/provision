@@ -2,10 +2,10 @@ package io.github.edadma.provision
 
 import scala.language.postfixOps
 import scala.util.matching.Regex
-import scala.util.parsing.combinator.RegexParsers
 import scala.util.parsing.input.{CharSequenceReader, Position, Positional}
+import scala.util.parsing.combinator.{ImplicitConversions, RegexParsers}
 
-class SpecParser extends RegexParsers:
+class SpecParser extends RegexParsers with ImplicitConversions:
 
   override protected val whiteSpace: Regex = """(\s|//.*)+""".r
 
@@ -23,10 +23,9 @@ class SpecParser extends RegexParsers:
   def spec: Parser[SpecAST] = rep(statement) ^^ SpecAST.apply
 
   def statement: Parser[StatementAST] =
-    kw("package") ~ ident ^^ PackageStatement
+    kw("package") ~> ident ^^ PackageStatement.apply
 
-  def parsePS(src: String): SpecAST =
-    parseAll(spec, new CharSequenceReader(src)) match {
+  def parseSpec(src: String): SpecAST =
+    parseAll(spec, new CharSequenceReader(src)) match
       case Success(tree, _)       => tree
-      case NoSuccess(error, rest) => problem(rest.pos, error, src)
-    }
+      case NoSuccess(error, rest) => problem(rest.pos, error)
