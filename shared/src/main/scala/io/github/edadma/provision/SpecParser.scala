@@ -5,7 +5,7 @@ import scala.util.matching.Regex
 import scala.util.parsing.combinator.RegexParsers
 import scala.util.parsing.input.{CharSequenceReader, Position, Positional}
 
-class PSLParser extends RegexParsers:
+class SpecParser extends RegexParsers:
 
   override protected val whiteSpace: Regex = """(\s|//.*)+""".r
 
@@ -20,8 +20,13 @@ class PSLParser extends RegexParsers:
       Ident(s, p)
     }
 
-  def parsePS(src: String): DMLModel =
-    parseAll(model, new CharSequenceReader(src)) match {
+  def spec: Parser[SpecAST] = rep(statement) ^^ SpecAST.apply
+
+  def statement: Parser[StatementAST] =
+    kw("package") ~ ident ^^ PackageStatement
+
+  def parsePS(src: String): SpecAST =
+    parseAll(spec, new CharSequenceReader(src)) match {
       case Success(tree, _)       => tree
       case NoSuccess(error, rest) => problem(rest.pos, error, src)
     }
