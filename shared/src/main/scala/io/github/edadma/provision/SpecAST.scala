@@ -4,20 +4,19 @@ import jdk.jshell.StatementSnippet
 
 import scala.util.parsing.input.Position
 
-case class SpecAST(statements: Seq[StatementAST])
+case class SpecAST(statements: Seq[StatAST])
 
-trait StatementAST
+trait StatAST
+case class PackageStat(pkg: Seq[Ident], state: Option[String]) extends StatAST
+case class ServiceStat(svc: Ident, state: String) extends StatAST
+case class BecomeStat(user: Ident) extends StatAST
+case class TaskStat(task: String) extends StatAST
+case class UserStat(user: Ident, group: Seq[Ident], shell: Path, home: Path) extends StatAST
+case class DirectoryStat(dir: Path, owner: Ident, group: Ident, state: String, mode: String) extends StatAST
+case class DefStat(name: Ident, value: String) extends StatAST
+case class DefsStat(file: Path) extends StatAST
+case class CopyStat(src: Path, dst: Path) extends StatAST
+case class GroupStat(group: Ident, state: String) extends StatAST
 
-case class PackageStatement(pkg: Seq[Ident], state: Option[String]) extends StatementAST
-case class ServiceStatement(svc: Ident, state: String) extends StatementAST
-case class BecomeStatement(user: Ident) extends StatementAST
-case class TaskStatement(task: String) extends StatementAST
-case class UserStatement(user: Ident, group: Seq[Ident], shell: Path, home: Path) extends StatementAST
-case class DirectoryStatement(dir: Path, owner: Ident, group: Ident, state: String, mode: String) extends StatementAST
-case class DefStatement(name: Ident, value: String) extends StatementAST
-case class DefsStatement(file: Path) extends StatementAST
-case class CopyStatement(src: Path, dst: Path) extends StatementAST
-case class GroupStatement(group: Ident, state: String) extends StatementAST
-
-case class Ident(s: String, pos: Position = null)
-case class Path(p: String, pos: Position = null)
+trait ExprAST extends Positioned
+case class VariableExpr(s: String, pos: Position = null) extends ExprAST
