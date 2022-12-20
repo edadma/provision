@@ -41,17 +41,19 @@ object SpecParser extends RegexParsers with ImplicitConversions:
       | kw("user") ~> expr ~ (onl ~> kw("group") ~> exprs) ~ (onl ~> kw("shell") ~> expr) ~
       (onl ~> kw("home") ~> expr) ^^ UserStat.apply
       | kw("dir") ~> expr ~ (onl ~> kw("owner") ~> expr) ~ (onl ~> kw("group") ~> expr) ~
-      (onl ~> kw("state") ~> kw("present")) ~
-      (onl ~> kw("mode") ~> """[0-7]{3,4}""".r) ^^ DirectoryStat.apply
+      (onl ~> kw("mode") ~> """[0-7]{3,4}""".r) ~
+      (onl ~> kw("state") ~> kw("present")) ^^ DirectoryStat.apply
       | kw("def") ~> string ~ line ^^ DefStat.apply
       | kw("defs") ~> expr ^^ DefsStat.apply
-      | kw("copy") ~> expr ~ expr ^^ CopyStat.apply
+      | kw("copy") ~> expr ~ expr ~ (onl ~> kw("owner") ~> expr) ~ (onl ~> kw("group") ~> expr) ~
+      (onl ~> kw("mode") ~> """[0-7]{3,4}""".r) ^^ CopyStat.apply
       | kw("group") ~> expr ~ (onl ~> kw("state") ~> kw("present")) ^^ GroupStat.apply
       | kw("deb") ~> expr ^^ DebStat.apply
       | kw("autoclean") ^^^ Autoclean
       | kw("autoremove") ^^^ Autoremove
       | kw("update") ^^^ Update
       | kw("upgrade") ^^^ Upgrade
+      | kw("hosts") ~> exprs ^^ HostsStat.apply
 
   def parseSpec(src: String): SpecAST =
     parseAll(spec, new CharSequenceReader(src)) match
