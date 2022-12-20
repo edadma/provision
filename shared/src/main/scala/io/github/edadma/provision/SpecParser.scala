@@ -27,18 +27,19 @@ object SpecParser extends RegexParsers with ImplicitConversions:
 
   def eol: Parser[String] = """(\s|//.*)+""".r
 
-  def spec: Parser[SpecAST] =
-    eol.? ~> repsep(statement, eol) <~ eol.? ^^ SpecAST.apply
+  def onl: Parser[Option[String]] = eol.?
 
-  def exprs: Parser[Seq[ExprAST]] = rep1sep(expr, ",")
+  def spec: Parser[SpecAST] = onl ~> repsep(statement, eol) <~ onl ^^ SpecAST.apply
+
+  def exprs: Parser[Seq[ExprAST]] = rep1sep(onl ~> expr, ",")
 
   def statement: Parser[StatAST] =
     kw("task") ~> line ^^ TaskStat.apply
       | kw("package") ~> exprs ~ opt(kw("latest") | kw("installed")) ^^ PackageStat.apply
       | kw("service") ~> expr ~ kw("started") ^^ ServiceStat.apply
       | kw("become") ~> expr ^^ BecomeStat.apply
-      | kw("user") ~> expr ~ (kw("group") ~> exprs) ~ (kw("shell") ~> expr) ~
-      (kw("home") ~> expr) ^^ UserStat.apply
+      | kw("user") ~> expr ~ (onl ~> kw("group") ~> exprs) ~ (onl ~> kw("shell") ~> expr) ~
+      (onl ~> kw("home") ~> expr) ^^ UserStat.apply
       | kw("dir") ~> expr ~ (kw("owner") ~> expr) ~ (kw("group") ~> expr) ~ (kw("state") ~> kw("present")) ~
       (kw("mode") ~> """[0-7]{3,4}""".r) ^^ DirectoryStat.apply
       | kw("def") ~> string ~ line ^^ DefStat.apply

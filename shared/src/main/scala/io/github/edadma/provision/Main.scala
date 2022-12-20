@@ -7,5 +7,9 @@ import pprint.pprintln
       |become root
       |task first task
       |def server nginx
-      |package $server installed
+      |package $server, git installed
+      |user asdf
+      |  group gasdf
+      |  shell /usr/bin/sasdf
+      |  home /home/asdf
       |""".stripMargin))
