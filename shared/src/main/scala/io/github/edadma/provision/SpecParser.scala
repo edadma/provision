@@ -7,7 +7,7 @@ import scala.util.parsing.combinator.{ImplicitConversions, RegexParsers}
 
 object SpecParser extends RegexParsers with ImplicitConversions:
 
-  override protected val whiteSpace: Regex = """(\s|//.*)+""".r
+  override protected val whiteSpace: Regex = """[ \t]|//.*""".r
 
   def pos: Parser[Position] = positioned(success(new Positional {})) ^^ (_.pos)
 
@@ -25,7 +25,10 @@ object SpecParser extends RegexParsers with ImplicitConversions:
 
   def expr: Parser[ExprAST] = variableExpr | stringExpr
 
-  def spec: Parser[SpecAST] = rep(statement) ^^ SpecAST.apply
+  def eol: Parser[String] = """(\s|//.*)+""".r
+
+  def spec: Parser[SpecAST] =
+    eol.? ~> repsep(statement, eol) <~ eol.? ^^ SpecAST.apply
 
   def exprs: Parser[Seq[ExprAST]] = rep1sep(expr, ",")
 
