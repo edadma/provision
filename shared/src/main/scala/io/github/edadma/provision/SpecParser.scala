@@ -15,13 +15,15 @@ object SpecParser extends RegexParsers with ImplicitConversions:
 
   def integer: Parser[String] = "[0-9]+".r
 
-  def variable: Parser[VariableExpr] = positioned("$" ~> """[a-zA-Z_$][a-zA-Z0-9_$]*""".r ^^ VariableExpr.apply)
+  def variableExpr: Parser[VariableExpr] = positioned("$" ~> """[a-zA-Z_$][a-zA-Z0-9_$]*""".r ^^ VariableExpr.apply)
 
   def line: Parser[String] = """.*""".r
 
-  def string: Parser[StringExpr] = positioned("""^[\s]+""".r ^^ StringExpr.apply)
+  def string: Parser[String] = """[^\s]+""".r
 
-  def expr: Parser[ExprAST] = variable | string
+  def stringExpr: Parser[StringExpr] = positioned(string ^^ StringExpr.apply)
+
+  def expr: Parser[ExprAST] = variableExpr | stringExpr
 
   def spec: Parser[SpecAST] = rep(statement) ^^ SpecAST.apply
 
@@ -36,7 +38,7 @@ object SpecParser extends RegexParsers with ImplicitConversions:
       (kw("home") ~> expr) ^^ UserStat.apply
       | kw("dir") ~> expr ~ (kw("owner") ~> expr) ~ (kw("group") ~> expr) ~ (kw("state") ~> kw("present")) ~
       (kw("mode") ~> """[0-7]{3,4}""".r) ^^ DirectoryStat.apply
-      | kw("def") ~> expr ~ line ^^ DefStat.apply
+      | kw("def") ~> string ~ line ^^ DefStat.apply
       | kw("defs") ~> expr ^^ DefsStat.apply
       | kw("copy") ~> expr ~ expr ^^ CopyStat.apply
       | kw("group") ~> expr ~ kw("present") ^^ GroupStat.apply
