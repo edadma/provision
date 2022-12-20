@@ -5,7 +5,7 @@ import scala.util.matching.Regex
 import scala.util.parsing.input.{CharSequenceReader, Position, Positional}
 import scala.util.parsing.combinator.{ImplicitConversions, RegexParsers}
 
-class SpecParser extends RegexParsers with ImplicitConversions:
+object SpecParser extends RegexParsers with ImplicitConversions:
 
   override protected val whiteSpace: Regex = """(\s|//.*)+""".r
 

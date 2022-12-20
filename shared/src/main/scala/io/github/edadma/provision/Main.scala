@@ -1,4 +1,8 @@
 package io.github.edadma.provision
 
+import pprint.pprintln
+
 @main def run(): Unit =
-  println(123)
+  pprintln(SpecParser.parseSpec("""
+      |task first task
+      |""".stripMargin))
