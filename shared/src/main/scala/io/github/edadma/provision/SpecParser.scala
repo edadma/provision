@@ -40,9 +40,8 @@ object SpecParser extends RegexParsers with ImplicitConversions:
       | kw("become") ~> expr ^^ BecomeStat.apply
       | kw("user") ~> expr ~ (onl ~> kw("group") ~> exprs) ~ (onl ~> kw("shell") ~> expr) ~
       (onl ~> kw("home") ~> expr) ^^ UserStat.apply
-      | kw("dir") ~> expr ~ (onl ~> kw("owner") ~> expr) ~ (onl ~> kw("group") ~> expr) ~ (onl ~> kw("state") ~> kw(
-        "present",
-      )) ~
+      | kw("dir") ~> expr ~ (onl ~> kw("owner") ~> expr) ~ (onl ~> kw("group") ~> expr) ~
+      (onl ~> kw("state") ~> kw("present")) ~
       (onl ~> kw("mode") ~> """[0-7]{3,4}""".r) ^^ DirectoryStat.apply
       | kw("def") ~> string ~ line ^^ DefStat.apply
       | kw("defs") ~> expr ^^ DefsStat.apply
