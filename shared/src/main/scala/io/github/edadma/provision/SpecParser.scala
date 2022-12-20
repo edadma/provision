@@ -50,6 +50,8 @@ object SpecParser extends RegexParsers with ImplicitConversions:
       | kw("deb") ~> expr ^^ DebStat.apply
       | kw("autoclean") ^^^ Autoclean
       | kw("autoremove") ^^^ Autoremove
+      | kw("update") ^^^ Update
+      | kw("upgrade") ^^^ Upgrade
 
   def parseSpec(src: String): SpecAST =
     parseAll(spec, new CharSequenceReader(src)) match

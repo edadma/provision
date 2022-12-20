@@ -20,6 +20,8 @@ case class GroupStat(group: ExprAST, state: String) extends StatAST
 case class DebStat(deb: ExprAST) extends StatAST
 case object Autoclean extends StatAST
 case object Autoremove extends StatAST
+case object Update extends StatAST
+case object Upgrade extends StatAST
 
 trait ExprAST extends Positional
 case class VariableExpr(name: String) extends ExprAST
