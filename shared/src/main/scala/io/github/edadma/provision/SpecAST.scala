@@ -18,6 +18,8 @@ case class DefsStat(file: ExprAST) extends StatAST
 case class CopyStat(src: ExprAST, dst: ExprAST) extends StatAST
 case class GroupStat(group: ExprAST, state: String) extends StatAST
 case class DebStat(deb: ExprAST) extends StatAST
+case object Autoclean extends StatAST
+case object Autoremove extends StatAST
 
 trait ExprAST extends Positional
 case class VariableExpr(name: String) extends ExprAST

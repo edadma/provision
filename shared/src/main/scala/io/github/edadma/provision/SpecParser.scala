@@ -48,6 +48,8 @@ object SpecParser extends RegexParsers with ImplicitConversions:
       | kw("copy") ~> expr ~ expr ^^ CopyStat.apply
       | kw("group") ~> expr ~ (onl ~> kw("state") ~> kw("present")) ^^ GroupStat.apply
       | kw("deb") ~> expr ^^ DebStat.apply
+      | kw("autoclean") ^^^ Autoclean
+      | kw("autoremove") ^^^ Autoremove
 
   def parseSpec(src: String): SpecAST =
     parseAll(spec, new CharSequenceReader(src)) match
