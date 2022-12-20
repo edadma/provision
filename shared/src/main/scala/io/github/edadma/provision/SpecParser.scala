@@ -15,36 +15,34 @@ class SpecParser extends RegexParsers with ImplicitConversions:
 
   def integer: Parser[String] = "[0-9]+".r
 
-  def variable: Parser[Ident] =
-    pos ~ ("$" ~> """[a-zA-Z_$][a-zA-Z0-9_$]*""".r) ^^ { case p ~ s =>
-      Ident(s, p)
-    }
+  def variable: Parser[VariableExpr] = positioned("$" ~> """[a-zA-Z_$][a-zA-Z0-9_$]*""".r ^^ VariableExpr.apply)
 
   def line: Parser[String] = """.*""".r
 
-  def pathlit: Parser[Path] = pos ~ """^[\s]+""".r ^^ { case p ~ s =>
-    Path(s, p)
-  }
+  def string: Parser[StringExpr] = positioned("""^[\s]+""".r ^^ StringExpr.apply)
+
+  def expr: Parser[ExprAST] = variable | string
 
   def spec: Parser[SpecAST] = rep(statement) ^^ SpecAST.apply
 
-  def idents: Parser[Seq[Ident]] = rep1sep(ident, ",")
+  def exprs: Parser[Seq[ExprAST]] = rep1sep(expr, ",")
 
   def statement: Parser[StatAST] =
     kw("task") ~> line ^^ TaskStat.apply
-      | kw("package") ~> idents ~ opt(kw("latest") | kw("installed")) ^^ PackageStat.apply
-      | kw("service") ~> ident ~ kw("started") ^^ ServiceStat.apply
-      | kw("become") ~> ident ^^ BecomeStat.apply
-      | kw("user") ~> ident ~ (kw("group") ~> idents) ~ (kw("shell") ~> path) ~
-      (kw("home") ~> path) ^^ UserStat.apply
-      | kw("dir") ~> path ~ (kw("owner") ~> ident) ~ (kw("group") ~> ident) ~ (kw("state") ~> kw("present")) ~
+      | kw("package") ~> exprs ~ opt(kw("latest") | kw("installed")) ^^ PackageStat.apply
+      | kw("service") ~> expr ~ kw("started") ^^ ServiceStat.apply
+      | kw("become") ~> expr ^^ BecomeStat.apply
+      | kw("user") ~> expr ~ (kw("group") ~> exprs) ~ (kw("shell") ~> expr) ~
+      (kw("home") ~> expr) ^^ UserStat.apply
+      | kw("dir") ~> expr ~ (kw("owner") ~> expr) ~ (kw("group") ~> expr) ~ (kw("state") ~> kw("present")) ~
       (kw("mode") ~> """[0-7]{3,4}""".r) ^^ DirectoryStat.apply
-      | kw("def") ~> ident ~ line ^^ DefStat.apply
-      | kw("defs") ~> path ^^ DefsStat.apply
-      | kw("copy") ~> path ~ path ^^ CopyStat.apply
-      | kw("group") ~> ident ~ kw("present") ^^ GroupStat.apply
+      | kw("def") ~> expr ~ line ^^ DefStat.apply
+      | kw("defs") ~> expr ^^ DefsStat.apply
+      | kw("copy") ~> expr ~ expr ^^ CopyStat.apply
+      | kw("group") ~> expr ~ kw("present") ^^ GroupStat.apply
 
   def parseSpec(src: String): SpecAST =
     parseAll(spec, new CharSequenceReader(src)) match
-      case Success(tree, _)       => tree
-      case NoSuccess(error, rest) => problem(rest.pos, error)
+      case Success(tree, _)     => tree
+      case Failure(error, rest) => problem(rest.pos, error)
+      case Error(error, rest)   => problem(rest.pos, error)
