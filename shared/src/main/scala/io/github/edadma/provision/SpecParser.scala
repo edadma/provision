@@ -35,17 +35,17 @@ object SpecParser extends RegexParsers with ImplicitConversions:
 
   def statement: Parser[StatAST] =
     kw("task") ~> line ^^ TaskStat.apply
-      | kw("package") ~> exprs ~ opt(kw("latest") | kw("installed")) ^^ PackageStat.apply
+      | kw("package") ~> exprs ~ opt(onl ~> (kw("latest") | kw("installed"))) ^^ PackageStat.apply
       | kw("service") ~> expr ~ kw("started") ^^ ServiceStat.apply
       | kw("become") ~> expr ^^ BecomeStat.apply
       | kw("user") ~> expr ~ (onl ~> kw("group") ~> exprs) ~ (onl ~> kw("shell") ~> expr) ~
       (onl ~> kw("home") ~> expr) ^^ UserStat.apply
-      | kw("dir") ~> expr ~ (kw("owner") ~> expr) ~ (kw("group") ~> expr) ~ (kw("state") ~> kw("present")) ~
-      (kw("mode") ~> """[0-7]{3,4}""".r) ^^ DirectoryStat.apply
+      | kw("dir") ~> expr ~ (onl ~> kw("owner") ~> expr) ~ (onl ~> kw("group") ~> expr) ~ (onl ~> kw("state") ~> kw("present")) ~
+      (onl ~> kw("mode") ~> """[0-7]{3,4}""".r) ^^ DirectoryStat.apply
       | kw("def") ~> string ~ line ^^ DefStat.apply
       | kw("defs") ~> expr ^^ DefsStat.apply
       | kw("copy") ~> expr ~ expr ^^ CopyStat.apply
-      | kw("group") ~> expr ~ kw("present") ^^ GroupStat.apply
+      | kw("group") ~> expr ~ (onl ~> kw("state") ~> kw("present")) ^^ GroupStat.apply
 
   def parseSpec(src: String): SpecAST =
     parseAll(spec, new CharSequenceReader(src)) match
