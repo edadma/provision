@@ -1,5 +1,6 @@
 package io.github.edadma.provision
 
+import scala.collection.mutable
 import scala.util.matching.Regex
 import scala.util.parsing.input.Positional
 
@@ -18,7 +19,9 @@ def check(expr: Option[ExprAST], regex: Regex, error: String, vars: Vars): Unit 
 
 def matches(expr: ExprAST, regex: Regex, vars: Vars): Boolean = regex.matches(eval(expr, vars))
 
-def validate(spec: SpecAST, vars: Vars): Unit =
+def validate(spec: SpecAST): Unit =
+  val vars = new mutable.HashMap[String, String]
+
   spec.statements foreach {
     case DirectoryStat(dir, owner, group, mode, state) =>
       check(dir, pathRegex, "invalid directory path", vars)
@@ -37,6 +40,7 @@ def validate(spec: SpecAST, vars: Vars): Unit =
     case TaskStat(task) =>
     case DefStat(name, value) =>
       check(!(vars contains eval(name, vars)), name, "duplicate definition")
+      vars(eval(name, vars)) = value
     case UserStat(user, group, shell, home) =>
       check(user, nameRegex, "invalid user name", vars)
       group foreach { g => check(g, nameRegex, "invalid group name", vars) }

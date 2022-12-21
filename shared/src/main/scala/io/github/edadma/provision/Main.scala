@@ -5,7 +5,7 @@ import pprint.pprintln
 import scala.collection.mutable
 
 @main def run(): Unit =
-  val ast = SpecParser.parseSpec("""
+  val spec = SpecParser.parseSpec("""
       |become root
       |task first task
       |def server nginx
@@ -15,7 +15,7 @@ import scala.collection.mutable
       |  shell /usr/bin/sasdf
       |  home /home/asdf
       |""".stripMargin)
-  val vars = new mutable.HashMap[String, String]
 
-  pprintln(ast)
-  validate(ast, vars)
+  pprintln(spec)
+  validate(spec)
+  execute(spec)
