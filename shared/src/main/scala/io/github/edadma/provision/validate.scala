@@ -12,9 +12,6 @@ def check(cond: Boolean, p: Positional, error: String): Unit = if !cond then pro
 def check(expr: ExprAST, regex: Regex, error: String, vars: VARS): Unit =
   check(matches(expr, regex, vars), expr, error)
 
-def check(s: String, regex: Regex, error: String): Unit =
-  check(matches(expr, regex, vars), expr, error)
-
 def matches(expr: ExprAST, regex: Regex, vars: VARS): Boolean = regex.matches(eval(expr, vars))
 
 def validate(spec: SpecAST, vars: VARS): Unit =
@@ -26,4 +23,6 @@ def validate(spec: SpecAST, vars: VARS): Unit =
       check(mode, modeRegex, "invalid mode", vars)
       check(state, "latest|present|absent".r, "invalid directory state")
     case CopyStat(src, dst, owner, group, mode) =>
+      check(src, pathRegex, "invalid source path name", vars)
+      check(dst, pathRegex, "invalid destination path name", vars)
   }
