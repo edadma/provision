@@ -16,7 +16,7 @@ case class DirectoryStat(dir: ExprAST, owner: ExprAST, group: ExprAST, mode: Exp
 case class DefStat(name: ExprAST, value: String) extends StatAST
 case class DefsStat(file: ExprAST) extends StatAST
 case class CopyStat(src: ExprAST, dst: ExprAST, owner: ExprAST, group: ExprAST, mode: ExprAST) extends StatAST
-case class GroupStat(group: ExprAST, state: String) extends StatAST
+case class GroupStat(group: ExprAST, state: ExprAST) extends StatAST
 case class DebStat(deb: ExprAST) extends StatAST
 case object Autoclean extends StatAST
 case object Autoremove extends StatAST

@@ -36,18 +36,18 @@ object SpecParser extends RegexParsers with ImplicitConversions:
   def statement: Parser[StatAST] =
     kw("task") ~> line ^^ TaskStat.apply
       | kw("package") ~> exprs ~ opt(onl ~> stringExpr) ^^ PackageStat.apply
-      | kw("service") ~> expr ~ kw("started") ^^ ServiceStat.apply
+      | kw("service") ~> expr ~ expr ^^ ServiceStat.apply // started
       | kw("become") ~> expr ^^ BecomeStat.apply
       | kw("user") ~> expr ~ (onl ~> kw("group") ~> exprs) ~ (onl ~> kw("shell") ~> expr) ~
       (onl ~> kw("home") ~> expr) ^^ UserStat.apply
       | kw("dir") ~> expr ~ (onl ~> kw("owner") ~> expr) ~ (onl ~> kw("group") ~> expr) ~
       (onl ~> kw("mode") ~> expr) ~
-      (onl ~> kw("state") ~> kw("present")) ^^ DirectoryStat.apply
+      (onl ~> kw("state") ~> expr) ^^ DirectoryStat.apply // present
       | kw("def") ~> stringExpr ~ line ^^ DefStat.apply
       | kw("defs") ~> expr ^^ DefsStat.apply
       | kw("copy") ~> expr ~ expr ~ (onl ~> kw("owner") ~> expr) ~ (onl ~> kw("group") ~> expr) ~
       (onl ~> kw("mode") ~> expr) ^^ CopyStat.apply
-      | kw("group") ~> expr ~ (onl ~> kw("state") ~> kw("present")) ^^ GroupStat.apply
+      | kw("group") ~> expr ~ (onl ~> kw("state") ~> expr) ^^ GroupStat.apply // present
       | kw("deb") ~> expr ^^ DebStat.apply
       | kw("autoclean") ^^^ Autoclean
       | kw("autoremove") ^^^ Autoremove
