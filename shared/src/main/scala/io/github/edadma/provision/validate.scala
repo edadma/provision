@@ -4,6 +4,7 @@ import scala.collection.mutable
 import scala.util.matching.Regex
 import scala.util.parsing.input.Positional
 
+private val varRegex = """[a-zA-Z_][a-zA-Z0-9_]*""".r
 private val nameRegex = """[a-z_][a-z0-9_-]*$?""".r
 private val pathRegex = """(?:/[a-zA-Z0-9._]+)+""".r
 private val modeRegex = """[0-7]{3,4}""".r
@@ -42,8 +43,11 @@ def validate(spec: SpecAST): Unit =
       check(user, nameRegex, "invalid user name", vars)
     case TaskStat(task) =>
     case DefStat(name, value) =>
-      check(!(vars contains eval(name, vars)), name, "duplicate definition")
-      vars(eval(name, vars)) = value
+      val n = eval(name, vars)
+
+      check(name, varRegex, "invalid variable name", vars)
+      check(!(vars contains n), name, s"duplicate definition: $n")
+      vars(n) = value
     case UserStat(user, group, shell, home) =>
       check(user, nameRegex, "invalid user name", vars)
       group foreach { g => check(g, nameRegex, "invalid group name", vars) }
