@@ -12,10 +12,10 @@ case class ServiceStat(svc: ExprAST, state: String) extends StatAST
 case class BecomeStat(user: ExprAST) extends StatAST
 case class TaskStat(task: String) extends StatAST
 case class UserStat(user: ExprAST, group: Seq[ExprAST], shell: ExprAST, home: ExprAST) extends StatAST
-case class DirectoryStat(dir: ExprAST, owner: ExprAST, group: ExprAST, mode: String, state: String) extends StatAST
+case class DirectoryStat(dir: ExprAST, owner: ExprAST, group: ExprAST, mode: ExprAST, state: String) extends StatAST
 case class DefStat(name: String, value: String) extends StatAST
 case class DefsStat(file: ExprAST) extends StatAST
-case class CopyStat(src: ExprAST, dst: ExprAST, owner: ExprAST, group: ExprAST, mode: String) extends StatAST
+case class CopyStat(src: ExprAST, dst: ExprAST, owner: ExprAST, group: ExprAST, mode: ExprAST) extends StatAST
 case class GroupStat(group: ExprAST, state: String) extends StatAST
 case class DebStat(deb: ExprAST) extends StatAST
 case object Autoclean extends StatAST

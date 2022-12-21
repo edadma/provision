@@ -2,7 +2,9 @@ package io.github.edadma.provision
 
 import scala.collection.mutable
 
-def eval(expr: ExprAST, vars: mutable.HashMap[String, String]): String =
+type VARS = mutable.HashMap[String, String]
+
+def eval(expr: ExprAST, vars: VARS): String =
   expr match
     case StringExpr(s) => s
     case VariableExpr(name) =>
