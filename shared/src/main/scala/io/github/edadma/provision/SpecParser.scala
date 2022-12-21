@@ -35,7 +35,7 @@ object SpecParser extends RegexParsers with ImplicitConversions:
 
   def statement: Parser[StatAST] =
     kw("task") ~> line ^^ TaskStat.apply
-      | kw("package") ~> exprs ~ opt(onl ~> (kw("latest") | kw("present") | kw("absent"))) ^^ PackageStat.apply
+      | kw("package") ~> exprs ~ opt(onl ~> stringExpr) ^^ PackageStat.apply
       | kw("service") ~> expr ~ kw("started") ^^ ServiceStat.apply
       | kw("become") ~> expr ^^ BecomeStat.apply
       | kw("user") ~> expr ~ (onl ~> kw("group") ~> exprs) ~ (onl ~> kw("shell") ~> expr) ~
@@ -43,7 +43,7 @@ object SpecParser extends RegexParsers with ImplicitConversions:
       | kw("dir") ~> expr ~ (onl ~> kw("owner") ~> expr) ~ (onl ~> kw("group") ~> expr) ~
       (onl ~> kw("mode") ~> expr) ~
       (onl ~> kw("state") ~> kw("present")) ^^ DirectoryStat.apply
-      | kw("def") ~> string ~ line ^^ DefStat.apply
+      | kw("def") ~> stringExpr ~ line ^^ DefStat.apply
       | kw("defs") ~> expr ^^ DefsStat.apply
       | kw("copy") ~> expr ~ expr ~ (onl ~> kw("owner") ~> expr) ~ (onl ~> kw("group") ~> expr) ~
       (onl ~> kw("mode") ~> expr) ^^ CopyStat.apply
