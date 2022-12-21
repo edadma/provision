@@ -7,9 +7,11 @@ def execute(spec: SpecAST): Unit =
 
   spec.statements foreach {
     case DirectoryStat(dir, owner, group, mode, state) =>
-    case CopyStat(src, dst, owner, group, mode)        =>
-    case BecomeStat(user)                              =>
-    case TaskStat(task)                                =>
+      println(s"mkdir -m ${eval(mode, vars)} ${eval(dir, vars)}")
+    case CopyStat(src, dst, owner, group, mode) =>
+    case BecomeStat(user)                       =>
+    case TaskStat(task) =>
+      println(task)
     case DefStat(name, value) =>
       vars(eval(name, vars)) = value
     case UserStat(user, group, shell, home) =>
@@ -19,4 +21,12 @@ def execute(spec: SpecAST): Unit =
     case GroupStat(group, state)            =>
     case ServiceStat(service, state)        =>
     case PackageStat(pkgs, state)           =>
+    case Update =>
+      println("apt update")
+    case Upgrade =>
+      println("apt upgrade")
+    case Autoclean =>
+      println("apt autoclean")
+    case Autoremove =>
+      println("apt autoremove")
   }

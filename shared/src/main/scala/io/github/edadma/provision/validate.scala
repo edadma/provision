@@ -68,4 +68,5 @@ def validate(spec: SpecAST): Unit =
     case PackageStat(pkgs, state) =>
       pkgs foreach { p => check(p, nameRegex, "invalid package name", vars) }
       check(state, "latest|present|absent".r, "invalid package state", vars)
+    case _ =>
   }
