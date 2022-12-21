@@ -17,7 +17,7 @@ object SpecParser extends RegexParsers with ImplicitConversions:
 
   def variableExpr: Parser[VariableExpr] = positioned("$" ~> """[a-zA-Z_$][a-zA-Z0-9_$]*""".r ^^ VariableExpr.apply)
 
-  def line: Parser[String] = """.*""".r
+  def line: Parser[String] = """.+""".r
 
   def string: Parser[String] = """[^\s]+""".r
 
