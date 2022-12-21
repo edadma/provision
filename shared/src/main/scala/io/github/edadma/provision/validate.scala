@@ -25,4 +25,7 @@ def validate(spec: SpecAST, vars: VARS): Unit =
     case CopyStat(src, dst, owner, group, mode) =>
       check(src, pathRegex, "invalid source path name", vars)
       check(dst, pathRegex, "invalid destination path name", vars)
+      check(owner, nameRegex, "invalid owner name", vars)
+      check(group, nameRegex, "invalid group name", vars)
+      check(mode, modeRegex, "invalid mode", vars)
   }
