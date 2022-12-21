@@ -9,4 +9,5 @@ def problem(pos: Position, msg: String): Nothing =
   else if (pos.line == 1) Console.err.println(s"$msg\n${pos.longString}")
   else Console.err.println(s"${pos.line}: $msg\n${pos.longString}")
 
-  sys.exit(1)
+//  sys.exit(1)
+  sys.error("error")

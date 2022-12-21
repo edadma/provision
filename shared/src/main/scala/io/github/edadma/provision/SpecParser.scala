@@ -15,7 +15,7 @@ object SpecParser extends RegexParsers with ImplicitConversions:
 
   def integer: Parser[String] = "[0-9]+".r
 
-  def variableExpr: Parser[VariableExpr] = positioned("$" ~> """[a-zA-Z_$][a-zA-Z0-9_$]*""".r ^^ VariableExpr.apply)
+  def variableExpr: Parser[VariableExpr] = "$" ~> positioned("""[a-zA-Z_$][a-zA-Z0-9_$]*""".r ^^ VariableExpr.apply)
 
   def line: Parser[String] = """.+""".r
 
@@ -36,7 +36,7 @@ object SpecParser extends RegexParsers with ImplicitConversions:
   def statement: Parser[StatAST] =
     kw("task") ~> line ^^ TaskStat.apply
       | kw("package") ~> exprs ~ opt(onl ~> stringExpr) ^^ PackageStat.apply
-      | kw("service") ~> expr ~ expr ^^ ServiceStat.apply // started
+      | kw("service") ~> expr ~ expr ^^ ServiceStat.apply
       | kw("become") ~> expr ^^ BecomeStat.apply
       | kw("user") ~> expr ~ (onl ~> kw("group") ~> exprs) ~ (onl ~> kw("shell") ~> expr) ~
       (onl ~> kw("home") ~> expr) ^^ UserStat.apply
