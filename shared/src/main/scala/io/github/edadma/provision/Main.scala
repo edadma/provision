@@ -6,8 +6,8 @@ import scala.collection.mutable
 
 @main def run(): Unit =
   val spec = SpecParser.parseSpec("""
-      |task upgrade packages
-      |update
+      |task echo test
+      |command echo testing123
       |""".stripMargin)
 
   pprintln(spec)

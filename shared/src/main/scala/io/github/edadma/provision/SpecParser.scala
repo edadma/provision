@@ -23,6 +23,8 @@ object SpecParser extends RegexParsers with ImplicitConversions:
 
   def stringExpr: Parser[StringExpr] = positioned(string ^^ StringExpr.apply)
 
+  def lineExpr: Parser[StringExpr] = positioned(line ^^ StringExpr.apply)
+
   def expr: Parser[ExprAST] = variableExpr | stringExpr
 
   def eol: Parser[String] = """(\s|//.*)+""".r
