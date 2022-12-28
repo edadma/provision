@@ -10,6 +10,7 @@ trait StatAST
 case class PackageStat(pkgs: Seq[ExprAST], state: Option[ExprAST]) extends StatAST
 case class ServiceStat(service: ExprAST, state: ExprAST) extends StatAST
 case class BecomeStat(user: ExprAST) extends StatAST
+case class CommandStat(command: ExprAST) extends StatAST
 case class TaskStat(task: String) extends StatAST
 case class UserStat(user: ExprAST, group: Seq[ExprAST], shell: ExprAST, home: ExprAST) extends StatAST
 case class DirectoryStat(dir: ExprAST, owner: ExprAST, group: ExprAST, mode: ExprAST, state: ExprAST) extends StatAST

@@ -29,4 +29,5 @@ def execute(spec: SpecAST): Unit =
       println("apt autoclean")
     case Autoremove =>
       println("apt autoremove")
+    case CommandStat(command) =>
   }

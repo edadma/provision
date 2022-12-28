@@ -6,14 +6,8 @@ import scala.collection.mutable
 
 @main def run(): Unit =
   val spec = SpecParser.parseSpec("""
-      |become root
-      |task first task
-      |def server nginx
-      |package $server, git present
-      |user asdf
-      |  group gasdf
-      |  shell /usr/bin/sasdf
-      |  home /home/asdf
+      |task upgrade packages
+      |update
       |""".stripMargin)
 
   pprintln(spec)
