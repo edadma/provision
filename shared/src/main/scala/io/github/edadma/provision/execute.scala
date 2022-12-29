@@ -20,7 +20,8 @@ def execute(spec: SpecAST, impl: SSH): Unit =
     case HostsStat(hosts)                   =>
     case GroupStat(group, state)            =>
     case ServiceStat(service, state)        =>
-    case PackageStat(pkgs, state)           =>
+    case PackageStat(pkgs, state) =>
+      impl.sudo(s"apt -y install ${pkgs map (p => eval(p, vars)) mkString " "}")
     case Update =>
       impl.sudo("apt update")
     case Upgrade =>

@@ -6,4 +6,5 @@ abstract class SSH:
   def init(hostname: String, username: String, password: String): Unit
   def exec(commandline: String): Int
   def shutdown(status: Int): Unit
-  def sudo(commandline: String): Int = exec(s"echo $sudopassword | sudo -S $commandline")
+  def sudo(commandline: String): Int =
+    exec(s"echo $sudopassword | sudo -S $commandline")
