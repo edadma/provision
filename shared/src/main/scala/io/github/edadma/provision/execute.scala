@@ -26,9 +26,9 @@ def execute(spec: SpecAST, password: String): Unit =
     case Upgrade =>
       Native.exec(s"echo $password | sudo -S apt upgrade")
     case Autoclean =>
-      println("apt autoclean")
+      Native.exec(s"echo $password | sudo -S apt autoclean")
     case Autoremove =>
-      println("apt autoremove")
+      Native.exec(s"echo $password | sudo -S apt autoremove")
     case CommandStat(command) =>
       if Native.exec(eval(command, vars)) != 0 then sys.exit(1)
   }
