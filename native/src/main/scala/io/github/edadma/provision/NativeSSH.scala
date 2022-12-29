@@ -8,9 +8,9 @@ object NativeSSH extends SSH:
   var rc: Int = 0
   var sudopassword: String = null
 
-  def initssh(hostname: String, username: String, password: String): Unit =
+  def init(hostname: String, username: String, password: String): Unit =
     sudopassword = password
-    rc = init(0)
+    rc = io.github.edadma.libssh2.init(0)
 
     if rc != 0 then
       Console.err.println(s"libssh2 initialization failed ($rc)")
@@ -87,7 +87,7 @@ object NativeSSH extends SSH:
     if rc != 0 then
       Console.err.println("Authentication by public key failed")
       shutdown(1)
-  end initssh
+  end init
 
   def exec(commandline: String): Int =
     var channel: Channel = new Channel(null)
