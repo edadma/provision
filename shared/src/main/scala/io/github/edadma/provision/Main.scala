@@ -8,6 +8,8 @@ import scala.collection.mutable
   val spec = SpecParser.parseSpec("""
       |task echo test
       |command echo testing 123
+      |task update
+      |update
       |task upgrade
       |upgrade
       |""".stripMargin)

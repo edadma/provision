@@ -22,7 +22,7 @@ def execute(spec: SpecAST, password: String): Unit =
     case ServiceStat(service, state)        =>
     case PackageStat(pkgs, state)           =>
     case Update =>
-      println("apt update")
+      Native.exec(s"echo $password | sudo -S apt update")
     case Upgrade =>
       Native.exec(s"echo $password | sudo -S apt upgrade")
     case Autoclean =>
