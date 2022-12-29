@@ -2,7 +2,7 @@ package io.github.edadma.provision
 
 import scala.collection.mutable
 
-def execute(spec: SpecAST): Unit =
+def execute(spec: SpecAST, password: String): Unit =
   val vars = new mutable.HashMap[String, String]
 
   spec.statements foreach {
@@ -24,10 +24,11 @@ def execute(spec: SpecAST): Unit =
     case Update =>
       println("apt update")
     case Upgrade =>
-      println("apt upgrade")
+      Native.exec(s"echo $password | sudo -S apt upgrade")
     case Autoclean =>
       println("apt autoclean")
     case Autoremove =>
       println("apt autoremove")
     case CommandStat(command) =>
+      Native.exec(eval(command, vars))
   }

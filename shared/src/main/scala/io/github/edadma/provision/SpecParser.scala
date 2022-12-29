@@ -40,7 +40,7 @@ object SpecParser extends RegexParsers with ImplicitConversions:
       | kw("package") ~> exprs ~ opt(onl ~> stringExpr) ^^ PackageStat.apply
       | kw("service") ~> expr ~ expr ^^ ServiceStat.apply
       | kw("become") ~> expr ^^ BecomeStat.apply
-      | kw("command") ~> expr ^^ CommandStat.apply
+      | kw("command") ~> lineExpr ^^ CommandStat.apply
       | kw("user") ~> expr ~ (onl ~> kw("group") ~> exprs) ~ (onl ~> kw("shell") ~> expr) ~
       (onl ~> kw("home") ~> expr) ^^ UserStat.apply
       | kw("directory") ~> expr ~ (onl ~> kw("owner") ~> expr) ~ (onl ~> kw("group") ~> expr) ~

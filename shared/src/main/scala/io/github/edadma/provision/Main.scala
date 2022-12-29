@@ -7,9 +7,12 @@ import scala.collection.mutable
 @main def run(): Unit =
   val spec = SpecParser.parseSpec("""
       |task echo test
-      |command echo testing123
+      |command echo testing 123
+      |upgrade
       |""".stripMargin)
 
   pprintln(spec)
   validate(spec)
-  execute(spec)
+  Native.initssh("127.0.0.1", "testuser", "easypassword")
+  execute(spec, "easypassword")
+  Native.shutdown(0)
