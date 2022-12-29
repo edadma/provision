@@ -30,5 +30,5 @@ def execute(spec: SpecAST, password: String): Unit =
     case Autoremove =>
       println("apt autoremove")
     case CommandStat(command) =>
-      Native.exec(eval(command, vars))
+      if Native.exec(eval(command, vars)) != 0 then sys.exit(1)
   }

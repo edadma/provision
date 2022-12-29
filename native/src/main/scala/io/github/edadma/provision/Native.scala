@@ -87,7 +87,7 @@ object Native extends SSH:
       shutdown(1)
   end initssh
 
-  def exec(commandline: String): Unit =
+  def exec(commandline: String): Int =
     var channel: Channel = new Channel(null)
 
     while {
@@ -105,7 +105,6 @@ object Native extends SSH:
       Console.err.println("Command could not be executed")
       shutdown(1)
 
-    Console.err.println("We read:")
     Console.err.println(new String(channel.read(session, sock).toArray))
 
     var exitcode = 127
@@ -122,16 +121,16 @@ object Native extends SSH:
       else null
 
     if exitsignal ne null then Console.err.println(s"Got signal: $exitsignal")
-    else Console.err.println(s"EXIT: $exitcode")
+    else if exitcode != 0 then Console.err.println(s"EXIT: $exitcode")
 
     channel.free
+    exitcode
   end exec
 
   def shutdown(status: Int): Unit =
     session.disconnect("Normal Shutdown, Thank you for playing")
     session.free()
     scala.scalanative.posix.unistd.close(sock)
-    Console.err.println("All done")
     exit()
     sys.exit(status)
   end shutdown
