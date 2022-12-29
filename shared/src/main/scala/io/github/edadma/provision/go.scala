@@ -12,8 +12,9 @@ def go(impl: SSH): Unit =
                                     |package curl
                                     |""".stripMargin)
 
-  pprintln(spec)
   validate(spec)
-  impl.init("127.0.0.1", "testuser", "easypassword")
+  impl.username = "testuser"
+  impl.password = "easypassword"
+  impl.init("127.0.0.1")
   execute(spec, impl)
   impl.shutdown(0)

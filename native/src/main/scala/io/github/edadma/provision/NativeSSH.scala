@@ -6,10 +6,8 @@ object NativeSSH extends SSH:
   var session: Session = new Session(null)
   var sock: Int = 0
   var rc: Int = 0
-  var sudopassword: String = null
 
-  def init(hostname: String, username: String, password: String): Unit =
-    sudopassword = password
+  def init(hostname: String): Unit =
     rc = io.github.edadma.libssh2.init(0)
 
     if rc != 0 then

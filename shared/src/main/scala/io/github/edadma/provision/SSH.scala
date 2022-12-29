@@ -1,10 +1,11 @@
 package io.github.edadma.provision
 
 abstract class SSH:
-  var sudopassword: String
+  var username: String = null
+  var password: String = null
 
-  def init(hostname: String, username: String, password: String): Unit
+  def init(hostname: String): Unit
   def exec(commandline: String): Int
   def shutdown(status: Int): Unit
   def sudo(commandline: String): Int =
-    exec(s"echo $sudopassword | sudo -S $commandline")
+    exec(s"echo $password | sudo -S $commandline")
