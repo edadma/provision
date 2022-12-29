@@ -16,6 +16,6 @@ import scala.collection.mutable
 
   pprintln(spec)
   validate(spec)
-  Native.initssh("127.0.0.1", "testuser", "easypassword")
+  NativeSSH.initssh("127.0.0.1", "testuser", "easypassword")
   execute(spec, "easypassword")
-  Native.shutdown(0)
+  NativeSSH.shutdown(0)

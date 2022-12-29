@@ -2,7 +2,7 @@ package io.github.edadma.provision
 
 import scala.collection.mutable
 
-def execute(spec: SpecAST, password: String): Unit =
+def execute(spec: SpecAST): Unit =
   val vars = new mutable.HashMap[String, String]
 
   spec.statements foreach {

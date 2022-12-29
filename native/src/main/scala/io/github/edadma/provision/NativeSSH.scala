@@ -2,12 +2,14 @@ package io.github.edadma.provision
 
 import io.github.edadma.libssh2._
 
-object Native extends SSH:
+object NativeSSH extends SSH:
   var session: Session = new Session(null)
   var sock: Int = 0
   var rc: Int = 0
+  var sudopassword: String = null
 
   def initssh(hostname: String, username: String, password: String): Unit =
+    sudopassword = password
     rc = init(0)
 
     if rc != 0 then
