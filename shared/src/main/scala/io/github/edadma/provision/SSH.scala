@@ -7,5 +7,5 @@ abstract class SSH:
   def init(hostname: String): Unit
   def exec(commandline: String): Int
   def shutdown(status: Int): Unit
-  def sudo(commandline: String): Int =
-    exec(s"echo $password | sudo -S $commandline")
+  def sudo(commandline: String): Int = exec(s"""echo "$password" | sudo -S $commandline""")
+  def command(commandline: String): Int = if username == "root" then sudo(commandline) else exec(commandline)

@@ -5,15 +5,19 @@ import scala.collection.mutable
 def execute(spec: SpecAST, impl: SSH): Unit =
   val vars = new mutable.HashMap[String, String]
 
+  def ev(e: ExprAST) = eval(e, vars)
+
   spec.statements foreach {
     case DirectoryStat(dir, owner, group, mode, state) =>
-      println(s"mkdir -m ${eval(mode, vars)} ${eval(dir, vars)}")
+      println(s"mkdir -m ${ev(mode)} ${ev(dir)}")
     case CopyStat(src, dst, owner, group, mode) =>
     case BecomeStat(user)                       =>
+      // todo: check user against /etc/passwd
+      impl.username = ev(user)
     case TaskStat(task) =>
       println(s"${Console.BOLD}${Console.UNDERLINED}   $task   ${Console.RESET}")
     case DefStat(name, value) =>
-      vars(eval(name, vars)) = value
+      vars(ev(name)) = value
     case UserStat(user, group, shell, home) =>
     case DebStat(deb)                       =>
     case DefsStat(file)                     =>
@@ -21,7 +25,7 @@ def execute(spec: SpecAST, impl: SSH): Unit =
     case GroupStat(group, state)            =>
     case ServiceStat(service, state)        =>
     case PackageStat(pkgs, state) =>
-      impl.sudo(s"apt -y install ${pkgs map (p => eval(p, vars)) mkString " "}")
+      impl.sudo(s"apt -y install ${pkgs map ev mkString " "}")
     case Update =>
       impl.sudo("apt update")
     case Upgrade =>
@@ -31,5 +35,5 @@ def execute(spec: SpecAST, impl: SSH): Unit =
     case Autoremove =>
       impl.sudo("apt autoremove")
     case CommandStat(command) =>
-      if impl.exec(eval(command, vars)) != 0 then sys.exit(1)
+      if impl.exec(ev(command)) != 0 then sys.exit(1)
   }
