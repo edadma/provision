@@ -11,7 +11,7 @@ def execute(spec: SpecAST, impl: SSH): Unit =
     case CopyStat(src, dst, owner, group, mode) =>
     case BecomeStat(user)                       =>
     case TaskStat(task) =>
-      println(task)
+      println(s"${Console.BOLD}${Console.UNDERLINED}   $task   ${Console.RESET}")
     case DefStat(name, value) =>
       vars(eval(name, vars)) = value
     case UserStat(user, group, shell, home) =>
