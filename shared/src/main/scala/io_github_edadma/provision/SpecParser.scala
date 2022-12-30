@@ -50,6 +50,8 @@ object SpecParser extends RegexParsers with ImplicitConversions:
       | kw("defs") ~> expr ^^ DefsStat.apply
       | kw("copy") ~> expr ~ expr ~ (onl ~> kw("owner") ~> expr) ~ (onl ~> kw("group") ~> expr) ~
       (onl ~> kw("mode") ~> expr) ^^ CopyStat.apply
+      | kw("file") ~> expr ~ (onl ~> kw("dest") ~> expr) ~ opt(onl ~> kw("owner") ~> expr) ~ opt(onl ~> kw("group") ~> expr) ~
+      opt(onl ~> kw("mode") ~> expr) ^^ FileStat.apply
       | kw("group") ~> expr ~ (onl ~> kw("state") ~> expr) ^^ GroupStat.apply // present
       | kw("deb") ~> expr ^^ DebStat.apply
       | kw("autoclean") ^^^ Autoclean

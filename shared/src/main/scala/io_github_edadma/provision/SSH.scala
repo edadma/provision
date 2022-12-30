@@ -12,3 +12,4 @@ abstract class SSH:
   def sudo(commandline: String): Int = exec(s"""echo "$password" | sudo -S $commandline""")
   def command(commandline: String): Int = if username == "root" then sudo(commandline) else exec(commandline)
   def read(path: String): ArraySeq[Byte]
+  def write(path: String, perm: Int, data: Seq[Byte]): Unit

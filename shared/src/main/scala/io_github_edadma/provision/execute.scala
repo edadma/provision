@@ -2,6 +2,8 @@ package io_github_edadma.provision
 
 import scala.collection.mutable
 
+val defaultMode = 0x1b6 // rw-rw-rw-
+
 def execute(spec: SpecAST, impl: SSH): Unit =
   val users = passwd(impl)
   val vars = new mutable.HashMap[String, String]
@@ -14,7 +16,9 @@ def execute(spec: SpecAST, impl: SSH): Unit =
     case DirectoryStat(dir, owner, group, mode, state) =>
       println(s"mkdir -m ${ev(mode)} ${ev(dir)}")
     case CopyStat(src, dst, owner, group, mode) =>
-    case BecomeStat(user)                       =>
+    case FileStat(content, dst, owner, group, mode) =>
+      impl.write(ev(dst), defaultMode, ev(content).getBytes.toIndexedSeq)
+    case BecomeStat(user) =>
       // todo: check user against /etc/passwd
       impl.username = ev(user)
     case TaskStat(task) =>

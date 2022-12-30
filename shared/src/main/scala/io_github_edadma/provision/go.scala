@@ -2,10 +2,8 @@ package io_github_edadma.provision
 
 def go(impl: SSH): Unit =
   val spec = SpecParser.parseSpec("""
-                                    |task echo test
-                                    |command echo testing 123
-                                    |task install
-                                    |package curl
+                                    |task create file
+                                    |file asdf dest afile
                                     |""".stripMargin)
 
   validate(spec)

@@ -153,7 +153,6 @@ object NativeSSH extends SSH:
       shutdown(1)
     }
 
-    Console.err.println(new String(data.toArray))
     channel.free
     data
   end read

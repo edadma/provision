@@ -6,7 +6,7 @@ import scala.util.parsing.input.Positional
 
 private val varRegex = """[a-zA-Z_][a-zA-Z0-9_]*""".r
 private val nameRegex = """[a-z_][a-z0-9_-]*$?""".r
-private val pathRegex = """(?:/[a-zA-Z0-9._]+)+""".r
+private val pathRegex = """[a-zA-Z0-9._]*(?:/[a-zA-Z0-9._]+)+|[a-zA-Z0-9._]+(?:/[a-zA-Z0-9._]+)*""".r
 private val modeRegex = """[0-7]{3,4}""".r
 private val urlRegex =
   """^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$""".r
@@ -36,6 +36,11 @@ def validate(spec: SpecAST): Unit =
     case CopyStat(src, dst, owner, group, mode) =>
       check(src, pathRegex, "invalid source path", vars)
       check(dst, urlRegex, "invalid destination URL", vars)
+      check(owner, nameRegex, "invalid owner name", vars)
+      check(group, nameRegex, "invalid group name", vars)
+      check(mode, modeRegex, "invalid mode", vars)
+    case FileStat(content, dst, owner, group, mode) =>
+      check(dst, pathRegex, "invalid destination path", vars)
       check(owner, nameRegex, "invalid owner name", vars)
       check(group, nameRegex, "invalid group name", vars)
       check(mode, modeRegex, "invalid mode", vars)
