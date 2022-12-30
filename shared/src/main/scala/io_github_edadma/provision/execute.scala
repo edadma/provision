@@ -14,7 +14,7 @@ def execute(spec: SpecAST, impl: SSH): Unit =
 
   spec.statements foreach {
     case DirectoryStat(dir, owner, group, mode, state) =>
-      println(s"mkdir -m ${ev(mode)} ${ev(dir)}")
+      impl.mkdir(ev(dir), defaultMode)
     case CopyStat(src, dst, owner, group, mode) =>
     case FileStat(content, dst, owner, group, mode) =>
       impl.write(ev(dst), defaultMode, ev(content).getBytes.toIndexedSeq)

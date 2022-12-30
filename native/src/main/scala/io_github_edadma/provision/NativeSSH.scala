@@ -181,4 +181,21 @@ object NativeSSH extends SSH:
     channel.waitClosed
     channel.free
   end write
+
+  def mkdir(path: String, perm: Int): Unit =
+    val sftpSession = session.sftpInit
+
+    if sftpSession.isNull then
+      Console.err.println("Unable to init SFTP session")
+      shutdown(1)
+
+    rc = sftpSession.mkdir(path, perm)
+
+    if rc != 0 then
+      Console.err.println(s"libssh2_sftp_mkdir failed: $rc")
+      shutdown(1)
+
+    sftpSession.shutdown
+  end mkdir
+
 end NativeSSH

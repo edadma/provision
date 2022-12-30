@@ -13,3 +13,4 @@ abstract class SSH:
   def command(commandline: String): Int = if username == "root" then sudo(commandline) else exec(commandline)
   def read(path: String): ArraySeq[Byte]
   def write(path: String, perm: Int, data: Seq[Byte]): Unit
+  def mkdir(path: String, perm: Int): Unit
