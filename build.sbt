@@ -19,13 +19,13 @@ lazy val provision = crossProject(JSPlatform, JVMPlatform, NativePlatform)
         "-language:existentials",
         "-language:dynamics",
       ),
-    organization := "io.github.edadma",
+    organization := "io_github_edadma",
     githubOwner := "edadma",
     githubRepository := name.value,
     mainClass := Some(s"${organization.value}.${name.value}.Main"),
 //    libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.14" % "test",
 //    libraryDependencies ++= Seq(
-//      "io.github.edadma" %%% "cross-platform" % "0.1.1"
+//      "io_github_edadma" %%% "cross-platform" % "0.1.1"
 //    ),
     libraryDependencies ++= Seq(
       "com.github.scopt" %%% "scopt" % "4.1.0",

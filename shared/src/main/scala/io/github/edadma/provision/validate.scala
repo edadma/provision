@@ -1,4 +1,4 @@
-package io.github.edadma.provision
+package io_github_edadma.provision
 
 import scala.collection.mutable
 import scala.util.matching.Regex

@@ -1,4 +1,4 @@
-package io.github.edadma.provision
+package io_github_edadma.provision
 
 import scala.util.parsing.input.{Position, Positional}
 

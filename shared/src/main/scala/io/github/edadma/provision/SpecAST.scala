@@ -1,4 +1,4 @@
-package io.github.edadma.provision
+package io_github_edadma.provision
 
 import jdk.jshell.StatementSnippet
 
