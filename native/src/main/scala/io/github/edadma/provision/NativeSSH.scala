@@ -1,6 +1,8 @@
 package io.github.edadma.provision
 
-import io.github.edadma.libssh2._
+import io.github.edadma.libssh2.*
+
+import scala.collection.immutable.ArraySeq
 
 object NativeSSH extends SSH:
   var session: Session = new Session(null)
@@ -105,7 +107,7 @@ object NativeSSH extends SSH:
       Console.err.println("Command could not be executed")
       shutdown(1)
 
-    Console.err.println(new String(channel.read(session, sock).toArray))
+    Console.err.println(new String(channel.read().get.toArray))
 
     var exitcode = 127
 
@@ -127,10 +129,30 @@ object NativeSSH extends SSH:
     exitcode
   end exec
 
-  def shutdown(status: Int): Unit =
+  def shutdown(status: Int): Nothing =
     session.disconnect("Normal Shutdown, Thank you for playing")
     session.free()
     scala.scalanative.posix.unistd.close(sock)
     exit()
     sys.exit(status)
   end shutdown
+
+  def fetch(path: String): ArraySeq[Byte] =
+    val (channel, size) = session.scpRecv2(path)
+
+    if channel.isNull then
+      val (err, errmsg) = session.lastError
+
+      Console.err.println(s"Unable to open a session: ($err) $errmsg")
+      shutdown(1)
+
+    Console.err.println("SCP session receiving file")
+
+    val data = channel.read(size) getOrElse {
+      Console.err.println(s"Error reading data: $rc")
+      shutdown(1)
+    }
+
+    Console.err.println(new String(data.toArray))
+    channel.free
+    data

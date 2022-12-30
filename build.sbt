@@ -41,7 +41,7 @@ lazy val provision = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   )
   .nativeSettings(
     nativeLinkStubs := true,
-    libraryDependencies += "io.github.edadma" %%% "libssh2" % "0.0.2",
+    libraryDependencies += "io.github.edadma" %%% "libssh2" % "0.0.3",
   )
   .jsSettings(
     jsEnv := new org.scalajs.jsenv.nodejs.NodeJSEnv(),
