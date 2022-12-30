@@ -157,3 +157,29 @@ object NativeSSH extends SSH:
     channel.free
     data
   end read
+
+  def write(path: String, perm: Int, data: Seq[Byte]): Unit =
+    val channel = session.scpSend(path, perm, data.length)
+
+    if channel.isNull then
+      val (err, errmsg) = session.lastError
+
+      Console.err.println(s"Unable to open a session: ($err) $errmsg")
+      shutdown(1)
+
+    Console.err.println("SCP session waiting to send file")
+    rc = channel.write(data)
+
+    if rc < 0 then
+      Console.err.println(s"Error writing data: $rc")
+      shutdown(1)
+
+    Console.err.println("Sending EOF")
+    channel.sendEof
+    Console.err.println("Waiting for EOF")
+    channel.waitEof
+    Console.err.println("Waiting for channel to close")
+    channel.waitClosed
+    channel.free
+  end write
+end NativeSSH
