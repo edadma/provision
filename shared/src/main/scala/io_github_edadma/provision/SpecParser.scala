@@ -43,9 +43,8 @@ object SpecParser extends RegexParsers with ImplicitConversions:
       | kw("command") ~> lineExpr ^^ CommandStat.apply
       | kw("user") ~> expr ~ (onl ~> kw("group") ~> exprs) ~ (onl ~> kw("shell") ~> expr) ~
       (onl ~> kw("home") ~> expr) ^^ UserStat.apply
-      | kw("directory") ~> expr ~ (onl ~> kw("owner") ~> expr) ~ (onl ~> kw("group") ~> expr) ~
-      (onl ~> kw("mode") ~> expr) ~
-      (onl ~> kw("state") ~> expr) ^^ DirectoryStat.apply // present
+      | kw("directory") ~> expr ~ opt(onl ~> kw("owner") ~> expr) ~ opt(onl ~> kw("group") ~> expr) ~
+      opt(onl ~> kw("mode") ~> expr) ~ opt(onl ~> kw("state") ~> expr) ^^ DirectoryStat.apply // present
       | kw("def") ~> stringExpr ~ line ^^ DefStat.apply
       | kw("defs") ~> expr ^^ DefsStat.apply
       | kw("copy") ~> expr ~ expr ~ (onl ~> kw("owner") ~> expr) ~ (onl ~> kw("group") ~> expr) ~

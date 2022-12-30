@@ -13,7 +13,13 @@ case class BecomeStat(user: ExprAST) extends StatAST
 case class CommandStat(command: ExprAST) extends StatAST
 case class TaskStat(task: String) extends StatAST
 case class UserStat(user: ExprAST, group: Seq[ExprAST], shell: ExprAST, home: ExprAST) extends StatAST
-case class DirectoryStat(dir: ExprAST, owner: ExprAST, group: ExprAST, mode: ExprAST, state: ExprAST) extends StatAST
+case class DirectoryStat(
+    dir: ExprAST,
+    owner: Option[ExprAST],
+    group: Option[ExprAST],
+    mode: Option[ExprAST],
+    state: Option[ExprAST],
+) extends StatAST
 case class DefStat(name: ExprAST, value: String) extends StatAST
 case class DefsStat(file: ExprAST) extends StatAST
 case class CopyStat(src: ExprAST, dst: ExprAST, owner: ExprAST, group: ExprAST, mode: ExprAST) extends StatAST
