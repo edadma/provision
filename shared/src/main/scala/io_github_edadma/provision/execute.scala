@@ -3,7 +3,10 @@ package io_github_edadma.provision
 import scala.collection.mutable
 
 def execute(spec: SpecAST, impl: SSH): Unit =
+  val users = passwd(impl)
   val vars = new mutable.HashMap[String, String]
+
+//  pprint.pprintln(users)
 
   def ev(e: ExprAST) = eval(e, vars)
 

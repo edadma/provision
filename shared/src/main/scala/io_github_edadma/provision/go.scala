@@ -1,9 +1,5 @@
 package io_github_edadma.provision
 
-import pprint.pprintln
-
-import scala.collection.mutable
-
 def go(impl: SSH): Unit =
   val spec = SpecParser.parseSpec("""
                                     |task echo test

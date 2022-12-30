@@ -1,6 +1,6 @@
 package io_github_edadma.provision
 
-import io.github.edadma.libssh2.*
+import io_github_edadma.libssh2.*
 
 import scala.collection.immutable.ArraySeq
 
@@ -10,7 +10,7 @@ object NativeSSH extends SSH:
   var rc: Int = 0
 
   def init(hostname: String): Unit =
-    rc = io.github.edadma.libssh2.init(0)
+    rc = io_github_edadma.libssh2.init(0)
 
     if rc != 0 then
       Console.err.println(s"libssh2 initialization failed ($rc)")
