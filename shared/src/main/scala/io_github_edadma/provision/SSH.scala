@@ -11,4 +11,4 @@ abstract class SSH:
   def shutdown(status: Int): Nothing
   def sudo(commandline: String): Int = exec(s"""echo "$password" | sudo -S $commandline""")
   def command(commandline: String): Int = if username == "root" then sudo(commandline) else exec(commandline)
-  def fetch(path: String): ArraySeq[Byte]
+  def read(path: String): ArraySeq[Byte]

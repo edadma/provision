@@ -137,7 +137,7 @@ object NativeSSH extends SSH:
     sys.exit(status)
   end shutdown
 
-  def fetch(path: String): ArraySeq[Byte] =
+  def read(path: String): ArraySeq[Byte] =
     val (channel, size) = session.scpRecv2(path)
 
     if channel.isNull then
@@ -156,3 +156,4 @@ object NativeSSH extends SSH:
     Console.err.println(new String(data.toArray))
     channel.free
     data
+  end read
