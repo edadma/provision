@@ -1,6 +1,7 @@
 package io_github_edadma.provision
 
 import scala.collection.immutable.ArraySeq
+import io_github_edadma.libssh2.Stat
 
 abstract class SSH:
   var username: String = null
@@ -14,3 +15,4 @@ abstract class SSH:
   def read(path: String): ArraySeq[Byte]
   def write(path: String, perm: Int, data: Seq[Byte]): Unit
   def mkdir(path: String, perm: Int): Unit
+  def stat(path: String): Option[Stat]

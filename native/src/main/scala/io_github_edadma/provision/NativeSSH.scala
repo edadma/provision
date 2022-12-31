@@ -198,4 +198,18 @@ object NativeSSH extends SSH:
     sftpSession.shutdown
   end mkdir
 
+  def stat(path: String): Option[Stat] =
+    val sftpSession = session.sftpInit
+
+    if sftpSession.isNull then
+      Console.err.println("Unable to init SFTP session")
+      shutdown(1)
+
+    val (rc, fileinfo) = sftpSession.stat(path)
+
+    sftpSession.shutdown
+
+    if rc != 0 then None
+    else Some(fileinfo)
+  end stat
 end NativeSSH
