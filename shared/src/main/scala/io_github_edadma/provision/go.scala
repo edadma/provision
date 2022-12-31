@@ -2,7 +2,7 @@ package io_github_edadma.provision
 
 def go(impl: SSH): Unit =
   val spec = SpecParser.parseSpec("""
-                                    |task create directory
+                                    |>> create directory
                                     |directory asdf
                                     |""".stripMargin)
 

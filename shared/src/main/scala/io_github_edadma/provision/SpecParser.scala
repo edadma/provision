@@ -36,7 +36,7 @@ object SpecParser extends RegexParsers with ImplicitConversions:
   def exprs: Parser[Seq[ExprAST]] = rep1sep(onl ~> expr, ",")
 
   def statement: Parser[StatAST] =
-    kw("task") ~> line ^^ TaskStat.apply
+    ">>" ~> line ^^ TaskStat.apply
       | kw("package") ~> exprs ~ opt(onl ~> stringExpr) ^^ PackageStat.apply
       | kw("service") ~> expr ~ expr ^^ ServiceStat.apply
       | kw("become") ~> expr ^^ BecomeStat.apply
@@ -49,7 +49,9 @@ object SpecParser extends RegexParsers with ImplicitConversions:
       | kw("defs") ~> expr ^^ DefsStat.apply
       | kw("copy") ~> expr ~ expr ~ (onl ~> kw("owner") ~> expr) ~ (onl ~> kw("group") ~> expr) ~
       (onl ~> kw("mode") ~> expr) ^^ CopyStat.apply
-      | kw("file") ~> expr ~ (onl ~> kw("dest") ~> expr) ~ opt(onl ~> kw("owner") ~> expr) ~ opt(onl ~> kw("group") ~> expr) ~
+      | kw("file") ~> expr ~ (onl ~> kw("dest") ~> expr) ~ opt(onl ~> kw("owner") ~> expr) ~ opt(
+        onl ~> kw("group") ~> expr,
+      ) ~
       opt(onl ~> kw("mode") ~> expr) ^^ FileStat.apply
       | kw("group") ~> expr ~ (onl ~> kw("state") ~> expr) ^^ GroupStat.apply // present
       | kw("deb") ~> expr ^^ DebStat.apply
