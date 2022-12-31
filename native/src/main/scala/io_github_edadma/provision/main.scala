@@ -5,4 +5,4 @@ import pprint.pprintln
 import scala.collection.mutable
 
 @main def run(): Unit =
-  go(NativeSSH)
+  app(NativeSSH)

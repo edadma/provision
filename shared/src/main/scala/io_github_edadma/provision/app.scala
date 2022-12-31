@@ -1,6 +1,6 @@
 package io_github_edadma.provision
 
-def go(impl: SSH): Unit =
+def app(impl: SSH): Unit =
   val spec = SpecParser.parseSpec("""
                                     |>> create directory
                                     |directory asdf
