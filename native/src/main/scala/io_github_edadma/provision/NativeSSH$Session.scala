@@ -4,7 +4,7 @@ import io_github_edadma.libssh2.*
 
 import scala.collection.immutable.ArraySeq
 
-object NativeSSH extends SSH:
+object NativeSSH$Session extends SSHSession:
   var session: Session = new Session(null)
   var sock: Int = 0
   var rc: Int = 0
@@ -212,4 +212,4 @@ object NativeSSH extends SSH:
     if rc != 0 then None
     else Some(fileinfo)
   end stat
-end NativeSSH
+end NativeSSH$Session

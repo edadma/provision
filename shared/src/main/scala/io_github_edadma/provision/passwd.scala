@@ -7,7 +7,7 @@ case class User(name: String, password: String, uid: String, gid: String, commen
 
 private val passwdRegex = """([^:]*):([^:]*):([^:]*):([^:]*):([^:]*):([^:]*):([^:]*)""".r
 
-def passwd(impl: SSH): Map[String, User] =
+def passwd(impl: SSHSession): Map[String, User] =
   scala.io.Source.fromString(new String(impl.read("/etc/passwd").toArray)).getLines() map {
     case passwdRegex(name, password, uid, gid, comment, home, shell) =>
       name -> User(name, password, uid, gid, comment, home, shell)

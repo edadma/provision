@@ -3,10 +3,11 @@ package io_github_edadma.provision
 import scala.collection.immutable.ArraySeq
 import io_github_edadma.libssh2.Stat
 
-trait SSHFactory:
-  def session(username: String, password: String, hostname: String): SSH
+trait SSH:
+  def init(): Unit
+  def session(username: String, password: String, hostname: String): SSHSession
 
-abstract class SSH:
+abstract class SSHSession:
   def disconnect(): Unit
   def exec(commandline: String): Int
   def shutdown(status: Int): Nothing

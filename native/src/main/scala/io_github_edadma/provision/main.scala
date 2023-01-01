@@ -4,4 +4,4 @@ import pprint.pprintln
 
 import scala.collection.mutable
 
-@main def run(args: String*): Unit = app(NativeSSH, args)
+@main def run(args: String*): Unit = app(NativeSSH$Session, args)

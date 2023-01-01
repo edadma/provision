@@ -4,7 +4,7 @@ import scala.collection.mutable
 
 val defaultMode = 0x1b6 // rw-rw-rw-
 
-def execute(spec: SpecAST, impl: SSH): Unit =
+def execute(spec: SpecAST, impl: SSHSession): Unit =
   val users = passwd(impl)
   val vars = new mutable.HashMap[String, String]
 
