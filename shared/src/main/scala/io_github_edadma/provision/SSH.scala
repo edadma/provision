@@ -3,11 +3,11 @@ package io_github_edadma.provision
 import scala.collection.immutable.ArraySeq
 import io_github_edadma.libssh2.Stat
 
-abstract class SSH:
-  var username: String = null
-  var password: String = null
+trait SSHFactory:
+  def session(username: String, password: String, hostname: String): SSH
 
-  def init(hostname: String): Unit
+abstract class SSH:
+  def disconnect(): Unit
   def exec(commandline: String): Int
   def shutdown(status: Int): Nothing
   def sudo(commandline: String): Int = exec(s"""echo "$password" | sudo -S $commandline""")

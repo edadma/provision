@@ -2,117 +2,46 @@ package io_github_edadma.provision
 
 import scopt.OParser
 
-def app(impl: SSH): Unit =
-
+def app(impl: SSH, args: Seq[String]): Unit =
   case class Config(
-      dataFile: Option[String] = None,
-      dataString: Option[String] = None,
-      templateFile: Option[String] = None,
-      templateString: Option[String] = None,
-      ast: Boolean = false,
+      login: Option[String] = None,
+      script: Option[String] = None,
   )
 
   val builder = OParser.builder[Config]
-  val parser = {
+  val parser =
     import builder._
 
-    // todo: add -t templatename=file,...
-    // todo: add -v varname=value,...
-
-    val BOLD = Console.BOLD
-    var firstSection = true
-
-    def section(name: String) = {
-      val res =
-        s"${if (!firstSection) "\n" else ""}$BOLD\u2501\u2501\u2501\u2501\u2501 $name ${"\u2501" * (25 - name.length)}${Console.RESET}"
-
-      firstSection = false
-      res
-    }
-
     OParser.sequence(
-      programName("squiggly"),
-      head("Squiggly Template Engine", "v0.1.14"),
-      note(section("first section")),
-      opt[Unit]('a', "ast")
+      programName("provision"),
+      head("Provision", "v0.0.1"),
+      opt[Option[String]]('l', "login")
+        .valueName("<user>:<password@ip")
         .optional()
-        .action((_, c) => c.copy(ast = true))
-        .text("pretty print AST"),
-      opt[Option[String]]('d', "data")
-        .valueName("<YAML>")
-        .optional()
-        .action((d, c) => c.copy(dataString = d))
+        .action((l, c) => c.copy(login = l))
         .text("YAML document"),
-      note(section("asdf")),
-      opt[Option[String]]('f', "template")
-        .valueName("<file>")
-        .optional()
-        .action((f, c) => c.copy(templateFile = f))
-        .validate { t =>
-          val f = new File(t.get)
-
-          if (f.exists && f.isFile && f.canRead) success
-          else failure("file must exist and be a readable file")
-        }
-        .text("template file"),
-      note(section("asdf dfgh")),
       help('h', "help").text("prints this usage text"),
       version('v', "version").text("prints the version"),
-      opt[Option[String]]('y', "yaml")
-        .valueName("<file>")
+      arg[Option[String]]("[<path>]")
         .optional()
-        .action((y, c) => c.copy(dataFile = y))
-        .validate { t =>
-          val f = new File(t.get)
-
-          if (f.exists && f.isFile && f.canRead) success
-          else failure("file must exist and be a readable file")
-        }
-        .text("YAML data file"),
-      arg[Option[String]]("[<template>]")
-        .optional()
-        .action((t, c) => c.copy(templateString = t))
-        .text(s"template string"),
+        .action((s, c) => c.copy(script = s))
+        .text(s"script file"),
     )
-  }
+  val loginRegex = """([a-zA-Z0-9._-]+):([^@]+)@([a-zA-Z0-9._-]+))"""
 
   OParser.parse(parser, args, Config()) match {
-    case Some(Config(_, _, None, None, _)) => println(OParser.usage(parser))
-    case Some(conf)                        => app(conf)
-    case _                                 =>
+    case Some(Config(None, _) | Config(_, None)) => println(OParser.usage(parser))
+    case Some(conf) =>
+      val spec = SpecParser.parseSpec("""
+          |>> create directory
+          |directory asdf
+          |""".stripMargin)
+
+      validate(spec)
+      impl.username = "testuser"
+      impl.password = "easypassword"
+      impl.init("127.0.0.1")
+      execute(spec, impl)
+      impl.shutdown(0)
+    case _ =>
   }
-
-  def app(c: Config): Unit = {
-    val data: Any =
-      if (c.dataFile.isDefined) yaml(readFile(c.dataFile.get))
-      else if (c.dataString.isDefined) yaml(c.dataString.get)
-      else Map()
-    val template: String = {
-      if (c.templateString.isDefined) c.templateString.get
-      else if (c.templateFile.isDefined)
-        if (c.templateFile.get == "--") scala.io.Source.fromInputStream(System.in).mkString
-        else readFile(c.templateFile.get)
-      else ""
-    }
-
-    val ast = new TemplateParser().parse(template)
-
-    if (c.ast)
-      pprintln(ast)
-    else {
-      TemplateRenderer.default.render(data, ast)
-      println()
-    }
-  }
-
-  val spec = SpecParser.parseSpec("""
-                                    |>> create directory
-                                    |directory asdf
-                                    |""".stripMargin)
-
-  validate(spec)
-  impl.username = "testuser"
-  impl.password = "easypassword"
-  impl.init("127.0.0.1")
-  execute(spec, impl)
-  impl.shutdown(0)
