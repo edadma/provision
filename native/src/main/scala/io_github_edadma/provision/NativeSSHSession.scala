@@ -5,6 +5,8 @@ import io_github_edadma.libssh2.*
 import scala.collection.immutable.ArraySeq
 
 object NativeSSH extends SSH:
+  // todo: store 'session' and 'sock' values for shutdown()
+
   def init(): Unit =
     val rc = io_github_edadma.libssh2.init(0)
 
@@ -96,6 +98,7 @@ object NativeSSH extends SSH:
 
     sshSession
   end session
+end NativeSSH
 
 class NativeSSHSession(username: String, password: String, session: Session, sock: Int)
     extends SSHSession(username, password):
