@@ -2,6 +2,8 @@ package io_github_edadma.provision
 
 import scopt.OParser
 
+import java.nio.file.{Files, Paths}
+
 def app(impl: SSH, args: Seq[String]): Unit =
   case class Config(
       login: Option[String] = None,
@@ -27,22 +29,22 @@ def app(impl: SSH, args: Seq[String]): Unit =
         .action((s, c) => c.copy(script = s))
         .text(s"script file"),
     )
-  val loginRegex = """([a-zA-Z0-9._-]+):([^@]+)@([a-zA-Z0-9._-]+))"""
+  val loginRegex = """([a-zA-Z0-9._-]+):([^@]+)@([a-zA-Z0-9._-]+)""".r
 
   OParser.parse(parser, args, Config()) match {
     case Some(Config(None, _) | Config(_, None)) => println(OParser.usage(parser))
-    case Some(conf) =>
-      val spec = SpecParser.parseSpec("""
-          |>> create directory
-          |directory asdf
-          |""".stripMargin)
+    case Some(Config(Some(loginRegex(username, password, host)), Some(script))) =>
+      try
+        val input = new String(Files.readAllBytes(Paths.get(script)))
+        val spec = SpecParser.parseSpec(input)
 
-      validate(spec)
-      impl.init()
+        validate(spec)
+        impl.init()
 
-      val session = impl.session("testuser", "easypassword", "127.0.0.1")
+        val session = impl.session(username, password, host)
 
-      execute(spec, session)
-      session.shutdown(0)
-    case _ =>
+        execute(spec, session)
+        session.shutdown(0)
+      catch case e: Exception => Console.err.println(e)
+    case _ => println(OParser.usage(parser))
   }
