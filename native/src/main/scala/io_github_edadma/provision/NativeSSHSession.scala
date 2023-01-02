@@ -67,6 +67,8 @@ object NativeSSH extends SSH:
     )
     nh.free()
 
+    val sshSession = new NativeSSHSession(username, password, session, sock)
+
     if password.nonEmpty then
       while {
           rc = session.userAuthPassword(username, password);
@@ -75,7 +77,7 @@ object NativeSSH extends SSH:
       do {}
       if rc != 0 then
         Console.err.println("Authentication by password failed")
-        shutdown(1)
+        sshSession.shutdown(1)
     else
       while {
           rc = session.userauthPublickeyFromFile(
@@ -90,12 +92,13 @@ object NativeSSH extends SSH:
 
     if rc != 0 then
       Console.err.println("Authentication by public key failed")
-      shutdown(1)
+      sshSession.shutdown(1)
 
-    new NativeSSHSession(username, password, session)
+    sshSession
   end session
 
-class NativeSSHSession(username: String, password: String, session: Session) extends SSHSession(username, password):
+class NativeSSHSession(username: String, password: String, session: Session, sock: Int)
+    extends SSHSession(username, password):
   def exec(commandline: String): Int =
     var channel: Channel = new Channel(null)
 
@@ -107,6 +110,8 @@ class NativeSSHSession(username: String, password: String, session: Session) ext
     if channel.isNull then
       Console.err.println("Channel could not be opened")
       shutdown(1)
+
+    var rc: Int = 0
 
     while { rc = channel.exec(commandline); rc } == LIBSSH2_ERROR_EAGAIN do session.waitsocket(sock)
 
@@ -156,7 +161,7 @@ class NativeSSHSession(username: String, password: String, session: Session) ext
     Console.err.println("SCP session receiving file")
 
     val data = channel.read(size) getOrElse {
-      Console.err.println(s"Error reading data: $rc")
+      Console.err.println("Error reading data")
       shutdown(1)
     }
 
@@ -174,7 +179,8 @@ class NativeSSHSession(username: String, password: String, session: Session) ext
       shutdown(1)
 
     Console.err.println("SCP session waiting to send file")
-    rc = channel.write(data)
+
+    val rc = channel.write(data)
 
     if rc < 0 then
       Console.err.println(s"Error writing data: $rc")
@@ -196,7 +202,7 @@ class NativeSSHSession(username: String, password: String, session: Session) ext
       Console.err.println("Unable to init SFTP session")
       shutdown(1)
 
-    rc = sftpSession.mkdir(path, perm)
+    val rc = sftpSession.mkdir(path, perm)
 
     if rc != 0 then
       Console.err.println(s"libssh2_sftp_mkdir failed: $rc")
