@@ -7,7 +7,7 @@ trait SSH:
   def init(): Unit
   def session(username: String, password: String, hostname: String): SSHSession
 
-abstract class SSHSession:
+abstract class SSHSession(val username: String, val password: String):
   def disconnect(): Unit
   def exec(commandline: String): Int
   def shutdown(status: Int): Nothing

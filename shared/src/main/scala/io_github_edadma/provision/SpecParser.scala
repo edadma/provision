@@ -60,7 +60,7 @@ object SpecParser extends RegexParsers with ImplicitConversions:
       | kw("update") ^^^ Update
       | kw("upgrade") ^^^ Upgrade
       | kw("hosts") ~> exprs ^^ HostsStat.apply
-      | kw("symblink") ~> exprs ~ (onl ~> kw("target") ~> expr ^^ SymlinkStat.apply
+      | kw("symblink") ~> expr ~ (onl ~> kw("target") ~> expr) ^^ SymlinkStat.apply
 
   def parseSpec(src: String): SpecAST =
     parseAll(spec, new CharSequenceReader(src)) match

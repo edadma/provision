@@ -20,8 +20,8 @@ def execute(spec: SpecAST, impl: SSHSession): Unit =
     case FileStat(content, dst, owner, group, mode) =>
       impl.write(ev(dst), defaultMode, ev(content).getBytes.toIndexedSeq)
     case BecomeStat(user) =>
-      // todo: check user against /etc/passwd
-      impl.username = ev(user)
+    // todo: check user against /etc/passwd
+//      impl.username = ev(user)
     case TaskStat(task) =>
       println(s"${Console.BOLD}${Console.UNDERLINED}   $task   ${Console.RESET}")
     case DefStat(name, value) =>

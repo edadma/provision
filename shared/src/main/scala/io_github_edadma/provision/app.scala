@@ -38,10 +38,11 @@ def app(impl: SSH, args: Seq[String]): Unit =
           |""".stripMargin)
 
       validate(spec)
-      impl.username = "testuser"
-      impl.password = "easypassword"
-      impl.init("127.0.0.1")
-      execute(spec, impl)
-      impl.shutdown(0)
+      impl.init()
+
+      val session = impl.session("testuser", "easypassword", "127.0.0.1")
+
+      execute(spec, session)
+      session.shutdown(0)
     case _ =>
   }
