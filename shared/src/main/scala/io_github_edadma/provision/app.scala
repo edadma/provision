@@ -2,7 +2,7 @@ package io_github_edadma.provision
 
 import scopt.OParser
 
-def app(impl: SSHSession, args: Seq[String]): Unit =
+def app(impl: SSH, args: Seq[String]): Unit =
   case class Config(
       login: Option[String] = None,
       script: Option[String] = None,

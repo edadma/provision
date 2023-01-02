@@ -74,5 +74,8 @@ def validate(spec: SpecAST): Unit =
       pkgs foreach { p => check(p, nameRegex, "invalid package name", vars) }
       check(state, "latest|present|absent".r, "invalid package state", vars)
     case CommandStat(command) =>
-    case _                    =>
+    case SymlinkStat(path: ExprAST, target: ExprAST) =>
+      check(path, pathRegex, "invalid file path", vars)
+      check(target, pathRegex, "invalid target path", vars)
+    case _ =>
   }

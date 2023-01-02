@@ -4,90 +4,93 @@ import io_github_edadma.libssh2.*
 
 import scala.collection.immutable.ArraySeq
 
-object NativeSSH$Session extends SSHSession:
-  var session: Session = new Session(null)
-  var sock: Int = 0
-  var rc: Int = 0
-
+object NativeSSH extends SSH:
   def init(hostname: String): Unit =
-    rc = io_github_edadma.libssh2.init(0)
+    val rc = io_github_edadma.libssh2.init(0)
 
     if rc != 0 then
       Console.err.println(s"libssh2 initialization failed ($rc)")
       sys.exit(1)
 
-    sock = connectPort22(hostname) match
-      case -1 =>
-        Console.err.println("failed to connect!")
+class NativeSSHSession extends SSHSession:
+  def session(username: String, password: String, hostname: String): SSHSession =
+    new SSHSession:
+      var session: Session = new Session(null)
+      var sock: Int = 0
+      var rc: Int = 0
+
+      sock = connectPort22(hostname) match
+        case -1 =>
+          Console.err.println("failed to connect!")
+          sys.exit(1)
+        case s => s
+
+      session = sessionInit
+
+      if session.isNull then
+        Console.err.println("failed to initialize a session")
         sys.exit(1)
-      case s => s
 
-    session = sessionInit
+      session.setBlocking(true)
 
-    if session.isNull then
-      Console.err.println("failed to initialize a session")
-      sys.exit(1)
+      while ({
+        rc = session.handshake(sock); rc
+      } == LIBSSH2_ERROR_EAGAIN) {}
 
-    session.setBlocking(true)
-
-    while ({
-      rc = session.handshake(sock); rc
-    } == LIBSSH2_ERROR_EAGAIN) {}
-
-    if rc != 0 then
-      Console.err.println(s"Failure establishing SSH session: $rc")
-      sys.exit(1)
-
-    val nh = session.knownHostInit
-
-    if nh.isNull then
-      Console.err.println("failed to knownhost init")
-      sys.exit(1)
-
-    nh.readFile("known_hosts", KnownHostFile.OPENSSH)
-    nh.writeFile("dumpfile", KnownHostFile.OPENSSH)
-
-    val (fingerprint, _) =
-      session.hostKey getOrElse {
-        Console.err.println("hostKey() failed")
-        sys.exit(1)
-      }
-
-    val (check, host) = nh.checkp(
-      hostname,
-      22,
-      fingerprint,
-      LIBSSH2_KNOWNHOST_TYPE_PLAIN | LIBSSH2_KNOWNHOST_KEYENC_RAW,
-    )
-
-    Console.err.println(
-      s"Host check: $check, key: ${if check <= LIBSSH2_KNOWNHOST_CHECK_MISMATCH then host.key else "<none>"}",
-    )
-    nh.free()
-
-    if password.nonEmpty then
-      while {
-          rc = session.userAuthPassword(username, password); rc
-        } == LIBSSH2_ERROR_EAGAIN
-      do {}
       if rc != 0 then
-        Console.err.println("Authentication by password failed")
-        shutdown(1)
-    else
-      while {
-          rc = session.userauthPublickeyFromFile(
-            username,
-            s"/home/$username/.ssh/id_rsa.pub",
-            s"/home/$username/.ssh/id_rsa",
-            password,
-          ); rc
-        } == LIBSSH2_ERROR_EAGAIN
-      do {}
+        Console.err.println(s"Failure establishing SSH session: $rc")
+        sys.exit(1)
 
-    if rc != 0 then
-      Console.err.println("Authentication by public key failed")
-      shutdown(1)
-  end init
+      val nh = session.knownHostInit
+
+      if nh.isNull then
+        Console.err.println("failed to knownhost init")
+        sys.exit(1)
+
+      nh.readFile("known_hosts", KnownHostFile.OPENSSH)
+      nh.writeFile("dumpfile", KnownHostFile.OPENSSH)
+
+      val (fingerprint, _) =
+        session.hostKey getOrElse {
+          Console.err.println("hostKey() failed")
+          sys.exit(1)
+        }
+
+      val (check, host) = nh.checkp(
+        hostname,
+        22,
+        fingerprint,
+        LIBSSH2_KNOWNHOST_TYPE_PLAIN | LIBSSH2_KNOWNHOST_KEYENC_RAW,
+      )
+
+      Console.err.println(
+        s"Host check: $check, key: ${if check <= LIBSSH2_KNOWNHOST_CHECK_MISMATCH then host.key else "<none>"}",
+      )
+      nh.free()
+
+      if password.nonEmpty then
+        while {
+            rc = session.userAuthPassword(username, password); rc
+          } == LIBSSH2_ERROR_EAGAIN
+        do {}
+        if rc != 0 then
+          Console.err.println("Authentication by password failed")
+          shutdown(1)
+      else
+        while {
+            rc = session.userauthPublickeyFromFile(
+              username,
+              s"/home/$username/.ssh/id_rsa.pub",
+              s"/home/$username/.ssh/id_rsa",
+              password,
+            ); rc
+          } == LIBSSH2_ERROR_EAGAIN
+        do {}
+
+      if rc != 0 then
+        Console.err.println("Authentication by public key failed")
+        shutdown(1)
+  end session
 
   def exec(commandline: String): Int =
     var channel: Channel = new Channel(null)

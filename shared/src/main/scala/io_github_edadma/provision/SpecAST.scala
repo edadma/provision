@@ -37,6 +37,7 @@ case object Autoremove extends StatAST
 case object Update extends StatAST
 case object Upgrade extends StatAST
 case class HostsStat(hosts: Seq[ExprAST]) extends StatAST
+case class SymlinkStat(path: ExprAST, target: ExprAST) extends StatAST
 
 trait ExprAST extends Positional
 case class VariableExpr(name: String) extends ExprAST

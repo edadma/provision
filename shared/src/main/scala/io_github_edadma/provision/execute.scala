@@ -44,4 +44,5 @@ def execute(spec: SpecAST, impl: SSHSession): Unit =
       impl.sudo("apt autoremove")
     case CommandStat(command) =>
       if impl.exec(ev(command)) != 0 then sys.exit(1)
+    case SymlinkStat(path: ExprAST, target: ExprAST) =>
   }
