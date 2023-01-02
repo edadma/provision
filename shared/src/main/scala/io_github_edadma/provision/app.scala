@@ -18,11 +18,11 @@ def app(impl: SSH, args: Seq[String]): Unit =
       opt[Option[String]]('l', "login")
         .valueName("<user>:<password@ip")
         .optional()
-        .action((l, c) => c.copy(login = l))
-        .text("YAML document"),
+        .action((l, c) => c.copy(login = l)),
+      // .text(""),
       help('h', "help").text("prints this usage text"),
       version('v', "version").text("prints the version"),
-      arg[Option[String]]("[<path>]")
+      arg[Option[String]]("<path>")
         .optional()
         .action((s, c) => c.copy(script = s))
         .text(s"script file"),
