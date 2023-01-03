@@ -6,7 +6,7 @@ import java.nio.file.{Files, Paths}
 
 def app(impl: SSH, args: Seq[String]): Unit =
   case class Config(
-      login: Option[String] = None,
+      host: Option[String] = None,
       script: Option[String] = None,
   )
 
@@ -17,10 +17,10 @@ def app(impl: SSH, args: Seq[String]): Unit =
     OParser.sequence(
       programName("provision"),
       head("Provision", "v0.0.1"),
-      opt[Option[String]]('l', "login")
+      opt[Option[String]]('h', "host")
         .valueName("<user>:<password@ip")
         .optional()
-        .action((l, c) => c.copy(login = l)),
+        .action((h, c) => c.copy(host = h)),
       // .text(""),
       help('h', "help").text("prints this usage text"),
       version('v', "version").text("prints the version"),
